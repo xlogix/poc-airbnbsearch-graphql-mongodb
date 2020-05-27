@@ -1,0 +1,49 @@
+{
+    "name": "airbnb-search",
+    "version": "1.0.0",
+    "description": "backend-server",
+    "private": true,
+    "main": "dist/index.js",
+    "scripts": {
+        "clean": "rm -rf dist",
+        "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+        "build": "npm clean && tsc",
+        "prestart": "npm build",
+        "start": "tsc --watch & nodemon dist/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "pre-commit": "npm tslint && npm build",
+        "tslint": "tslint --project tsconfig.json",
+        "tslint:fix": "tslint --project tsconfig.json --fix"
+    },
+    "keywords": [],
+    "license": "MIT",
+    "husky": {
+        "hooks": {
+            "pre-commit": "npm pre-commit"
+        }
+    },
+    "dependencies": {
+        "apollo-server": "^2.13.1",
+        "apollo-server-express": "^2.13.1",
+        "bluebird": "^3.7.2",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "graphql-iso-date": "^3.6.1",
+        "jsonwebtoken": "^8.5.1",
+        "lodash": "^4.17.15",
+        "mongoose": "^5.9.15"
+    },
+    "devDependencies": {
+        "@types/bluebird": "^3.5.32",
+        "@types/dotenv": "^8.2.0",
+        "@types/express": "^4.17.6",
+        "@types/jsonwebtoken": "^8.5.0",
+        "@types/lodash": "^4.14.152",
+        "@types/mongoose": "^5.7.21",
+        "@types/node": "^14.0.5",
+        "husky": "^4.2.5",
+        "nodemon": "^2.0.4",
+        "tslint": "^6.1.2",
+        "typescript": "^3.9.3"
+    }
+}
