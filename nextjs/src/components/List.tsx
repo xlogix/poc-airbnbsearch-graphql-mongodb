@@ -20,17 +20,17 @@ const List: React.SFC<ListProps> = props => {
             ))}
             <style jsx>
                 {`
-          .List:hover {
-            transform: scale(1.1);
-          }
-          h2 {
-            font-size: 1rem;
-            text-align: right;
-          }
-          img {
-            margin-right: 2rem;
-          }
-        `}
+                .List:hover {
+                    transform: scale(1.1);
+                }
+                h2 {
+                    font-size: 1rem;
+                    text-align: right;
+                }
+                img {
+                    margin-right: 2rem;
+                }
+                `}
             </style>
         </>
     );
