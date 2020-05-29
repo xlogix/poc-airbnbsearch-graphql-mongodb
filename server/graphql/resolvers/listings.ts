@@ -46,9 +46,6 @@ const ListingQueries = {
             listingQB = listingQB.andWhere('l.person_capacity = :person_capacity',
             { person_capacity });
         }
-        if (room_type) {
-            listingQB = listingQB.andWhere('l.room_type = :room_type', { room_type });
-        }
         if (room_and_property_type) {
             listingQB = listingQB.andWhere('l.room_and_property_type = :room_and_property_type', { room_and_property_type });
         }

@@ -23,7 +23,7 @@ const listingTypeDefs = gql`
         url: String!
         description: String!
         price_rate: Int!
-        room_type: String!
+        room_type: String
         room_and_property_type: String!
         latitude: Float!
         longitude: Float!
@@ -58,7 +58,6 @@ const listingTypeDefs = gql`
     }
     input SearchListingsInput {
         name: String
-        room_type: String
         room_and_property_type: String
         price_rate: Int
         person_capacity: Int

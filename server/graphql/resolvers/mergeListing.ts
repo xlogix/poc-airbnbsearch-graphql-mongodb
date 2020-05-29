@@ -1,7 +1,10 @@
 import dateToString from '../../helpers/date';
 import Listing from '../../models/listing';
 
-// Get Listings
+/**
+ * Get listing object with schema typing
+ * @param id
+ */
 const getListing = async (id: string) => {
     try {
         const listing: any = await Listing.findById(id);
@@ -16,7 +19,10 @@ const getListing = async (id: string) => {
     }
 };
 
-// Takes a user object and returns the data
+/**
+ * Get listing object with schema typing
+ * @param listing
+ */
 const transformListing = (listing: any) => {
     return {
         ...listing._doc,
