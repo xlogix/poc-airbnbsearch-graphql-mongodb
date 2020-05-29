@@ -1,7 +1,6 @@
 import { PubSub } from 'apollo-server';
 import mongoose from 'mongoose';
 import Listing from '../../models/listing';
-import { getConnection } from 'typeorm';
 import { transformListing } from './mergeListing';
 const pubsub = new PubSub();
 
@@ -31,33 +30,13 @@ const ListingQueries = {
     },
     searchListings: async (
         _: any,
-        { input: { name, person_capacity, room_type, room_and_property_type, price_rate, amenities } }: any
+        { input: { name, person_capacity, room_and_property_type, price_rate, amenities } }: any
     ) => {
-        let listingQB = getConnection()
-            .getRepository(Listing)
-            .createQueryBuilder('l');
-
-        if (name) {
-            listingQB = listingQB.andWhere('l.name ilike :name', {
-                name: `%${name}%`
-            });
-        }
-        if (person_capacity) {
-            listingQB = listingQB.andWhere('l.person_capacity = :person_capacity',
-            { person_capacity });
-        }
-        if (room_and_property_type) {
-            listingQB = listingQB.andWhere('l.room_and_property_type = :room_and_property_type', { room_and_property_type });
-        }
-        if (price_rate) {
-            listingQB = listingQB.andWhere('l.price_rate = :price_rate',
-            { price_rate });
-        }
-        if (amenities) {
-            listingQB = listingQB.andWhere('l.amenities ilike :amenities', {
-                amenities: `%${amenities}%`
-            });
-        }
+        let listings = Listing.find({
+            name: { $regex: name, $options: 'i' },
+            amenities: { $regex: amenities, $options: 'i' }
+        });
+        return listings;
     }
 };
 

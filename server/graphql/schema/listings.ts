@@ -41,7 +41,7 @@ const listingTypeDefs = gql`
         latitude: Float!
         longitude: Float!
         person_capacity: Int!
-        amenities: [String!]!
+        amenities: String!
     }
     input UpdateListingInput {
         name: String!
@@ -61,7 +61,7 @@ const listingTypeDefs = gql`
         room_and_property_type: String
         price_rate: Int
         person_capacity: Int
-        amenities: [String]
+        amenities: String
     }
 `;
 
