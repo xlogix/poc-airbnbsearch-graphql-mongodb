@@ -33,8 +33,11 @@ const ListingQueries = {
         { input: { name, person_capacity, room_and_property_type, price_rate, amenities } }: any
     ) => {
         let listings = Listing.find({
-            name: { $regex: name, $options: 'i' },
-            amenities: { $regex: amenities, $options: 'i' }
+            $and: [
+                { name: { $regex: name, $options: 'i' } },
+                { person_capacity: person_capacity },
+                { amenities: { $regex: amenities, $options: 'i' } }
+            ]
         });
         return listings;
     }
