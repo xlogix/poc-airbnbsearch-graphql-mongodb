@@ -70,7 +70,7 @@ const listingSchema = new mongoose.Schema(
 listingSchema.statics = {
     /**
      * Get Listing
-     * @param {ObjectId} id - The objectId of user.
+     * @param {ObjectId} id - The objectId of listing.
      */
     get(id: string): mongoose.Document {
         return this.findById(id)

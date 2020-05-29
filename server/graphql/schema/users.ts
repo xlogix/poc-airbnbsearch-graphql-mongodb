@@ -1,8 +1,6 @@
 import { gql } from 'apollo-server-express';
-import { ApolloServerExpressConfig } from 'apollo-server-express';
-import resolvers from '../resolvers/index';
 
-const typeDefs = gql`
+const userTypeDefs = gql`
     type Query {
         users: [User!]!
         user(userId: ID!): User!
@@ -40,17 +38,4 @@ const typeDefs = gql`
     }
 `;
 
-const schema: ApolloServerExpressConfig = {
-    typeDefs,
-    resolvers,
-    introspection: true,
-    context: async ({ req, connection, payload }: any) => {
-        if (connection) {
-            return { isAuth: payload.authToken };
-        }
-        return { isAuth: req.isAuth };
-    },
-    playground: true
-};
-
-export default schema;
+export { userTypeDefs };

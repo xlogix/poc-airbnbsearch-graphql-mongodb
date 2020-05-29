@@ -2,18 +2,15 @@ import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import express from 'express';
 import * as http from 'http';
-import schema from '../server/graphql/schema/users';
+import schemas from '../server/graphql/schema/index';
 import auth from '../server/middleware/auth';
 import config from './index';
 
 class Express {
     public app: express.Application;
-    public server: ApolloServer = new ApolloServer(schema);
+    public server: ApolloServer = new ApolloServer(schemas);
     public httpServer: http.Server;
     public init = (): void => {
-        /**
-         * Creating an express application
-         */
         this.app = express();
         /**
          * Middlerware for using CORS

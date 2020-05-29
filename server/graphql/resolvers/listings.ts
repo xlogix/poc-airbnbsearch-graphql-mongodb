@@ -1,18 +1,17 @@
 import { PubSub } from 'apollo-server';
-import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
-import config from '../../../config';
 import Listing from '../../models/listing';
+import { getConnection } from 'typeorm';
 import { transformListing } from './mergeListing';
 const pubsub = new PubSub();
 
-const Listing_ADDED = 'Listing_ADDED';
+const LISTING_ADDED = 'LISTING_ADDED';
 
 /**
  * Listing Queries
  */
 const ListingQueries = {
-    Listings: async (parent, args) => {
+    listings: async (parent, args, context) => {
         try {
             const listings = await Listing.find();
             return listings.map((listing) => {
@@ -22,7 +21,7 @@ const ListingQueries = {
             throw err;
         }
     },
-    Listing: async (parent, { ListingId }) => {
+    listing: async (parent, { ListingId }) => {
         try {
             const listing = await Listing.findById(ListingId);
             return transformListing(listing);
@@ -32,20 +31,38 @@ const ListingQueries = {
     },
     searchListings: async (
         _: any,
-        { input: { name, room_type, room_and_property_type, price_rate }, limit, offset }: any
+        { input: { name, person_capacity, room_type, room_and_property_type, price_rate, amenities } }: any
     ) => {
-        if (guests) {
-            listingQB = listingQB.andWhere("l.guests = :guests", { guests });
-        }
-        if (beds) {
-            listingQB = listingQB.andWhere("l.beds = :beds", { beds });
-        }
+        let listingQB = getConnection()
+            .getRepository(Listing)
+            .createQueryBuilder('l');
+
         if (name) {
-            listingQB = listingQB.andWhere("l.name ilike :name", {
+            listingQB = listingQB.andWhere('l.name ilike :name', {
                 name: `%${name}%`
             });
         }
-    }};
+        if (person_capacity) {
+            listingQB = listingQB.andWhere('l.person_capacity = :person_capacity',
+            { person_capacity });
+        }
+        if (room_type) {
+            listingQB = listingQB.andWhere('l.room_type = :room_type', { room_type });
+        }
+        if (room_and_property_type) {
+            listingQB = listingQB.andWhere('l.room_and_property_type = :room_and_property_type', { room_and_property_type });
+        }
+        if (price_rate) {
+            listingQB = listingQB.andWhere('l.price_rate = :price_rate',
+            { price_rate });
+        }
+        if (amenities) {
+            listingQB = listingQB.andWhere('l.amenities ilike :amenities', {
+                amenities: `%${amenities}%`
+            });
+        }
+    }
+};
 
 /**
  * Listing Mutations
@@ -61,22 +78,23 @@ const ListingMutation = {
             } else {
                 const newListing = new Listing({
                     _id: new mongoose.Types.ObjectId(),
-                    email: ListingInput.email,
                     name: ListingInput.name,
-                    password: ListingInput.password
+                    category: ListingInput.category,
+                    url: ListingInput.url,
+                    description: ListingInput.description,
+                    price_rate: ListingInput.price_rate,
+                    room_type: ListingInput.room_type,
+                    room_and_property_type: ListingInput.room_and_property_type,
+                    latitude: ListingInput.latitude,
+                    longitude: ListingInput.longitude,
+                    person_capacity: ListingInput.person_capacity,
+                    amenities: ListingInput.amenities
                 });
                 const savedListing = await newListing.save();
-                pubsub.publish(Listing_ADDED, {
+                pubsub.publish(LISTING_ADDED, {
                     ListingAdded: transformListing(savedListing)
                 });
-                const token = jwt.sign({ ListingId: savedListing.id }, config.jwtSecret, {
-                    expiresIn: '1h'
-                });
-                return {
-                    ListingId: savedListing.id,
-                    token,
-                    tokenExpiration: 1
-                };
+                return transformListing(listing);
             }
         } catch (error) {
             throw error;
@@ -106,8 +124,8 @@ const ListingMutation = {
  * Listing Subscriptions
  */
 const ListingSubscription = {
-    ListingAdded: {
-        subscribe: () => pubsub.asyncIterator([Listing_ADDED])
+    listingAdded: {
+        subscribe: () => pubsub.asyncIterator([LISTING_ADDED])
     }
 };
 

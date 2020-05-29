@@ -1,9 +1,23 @@
 import { gql } from 'apollo-server-express';
-import { ApolloServerExpressConfig } from 'apollo-server-express';
-import resolvers from '../resolvers/index';
 
-const typeDefs = gql`
-    input CreateListingInput {
+const listingTypeDefs = gql`
+    type Query {
+        listings: [Listing!]!
+        listing(listingId: ID!): Listing!
+        searchListings(
+            input: SearchListingsInput
+        ): [Listing!]!
+    }
+    type Mutation {
+        createListing(input: ListingInput!): Boolean!
+        updateListing(listingId: String!, input: UpdateListingInput!): Boolean!
+        deleteListing(id: String!): Boolean!
+    }
+    type Subscription {
+        listingAdded: Listing
+    }
+    type Listing {
+        _id: ID!
         name: String!
         category: String!
         url: String!
@@ -11,48 +25,45 @@ const typeDefs = gql`
         price_rate: Int!
         room_type: String!
         room_and_property_type: String!
-        latitude: Number!
-        longitude: Number!
-        person_capacity: Number!
+        latitude: Float!
+        longitude: Float!
+        person_capacity: Int!
         amenities: [String!]!
     }
-
+    input ListingInput {
+        name: String!
+        category: String!
+        url: String!
+        description: String!
+        price_rate: Int!
+        room_type: String!
+        room_and_property_type: String!
+        latitude: Float!
+        longitude: Float!
+        person_capacity: Int!
+        amenities: [String!]!
+    }
+    input UpdateListingInput {
+        name: String!
+        category: String!
+        url: String!
+        description: String!
+        price_rate: Int!
+        room_type: String!
+        room_and_property_type: String!
+        latitude: Float!
+        longitude: Float!
+        person_capacity: Int!
+        amenities: [String!]!
+    }
     input SearchListingsInput {
         name: String
         room_type: String
         room_and_property_type: String
         price_rate: Int
+        person_capacity: Int
         amenities: [String]
-    }
-        
-    type Query {
-        searchListings(
-            input: SearchListingsInput
-            offset: Int!
-            limit: Int!
-        ): [Listing!]!
-    }
-      
-    type Mutation {
-        createListing(input: CreateListingInput!): Boolean!
-    }
-
-    type Mutation {
-        deleteListing(id: String!): Boolean!
     }
 `;
 
-const schema: ApolloServerExpressConfig = {
-    typeDefs,
-    resolvers,
-    introspection: true,
-    context: async ({ req, connection, payload }: any) => {
-        if (connection) {
-            return { isAuth: payload.authToken };
-        }
-        return { isAuth: req.isAuth };
-    },
-    playground: true
-};
-
-export default schema;
+export { listingTypeDefs };
